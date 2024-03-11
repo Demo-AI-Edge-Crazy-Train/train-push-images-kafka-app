@@ -1,0 +1,12 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="push-to-kafka-route">
+        <from uri="paho:{{train.mqtt.source.topicName}}?brokerUrl={{train.mqtt.brokerUrl}}"/>     
+        <log message="MQTT message received:"/>
+        <setHeader name="origin"><simple>"${body}"</simple></setHeader>
+        <setHeader name="id"><jsonpath>$.id</jsonpath></setHeader>
+        <log message="${header.id}"/>
+        <setBody><simple>${header.origin}</simple></setBody>        
+        <toD uri="kafka:{{monitoring.kafka.destination.topicName}}?brokers={{train.kafka.brokerUrl}}"/>
+        <log message="written into kafka"/>
+    </route>
+</routes>
